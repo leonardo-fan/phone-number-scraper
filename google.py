@@ -1,18 +1,16 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from url_helper import group_links
+from phone_number import get_phone_numbers_from_string
 
 # blacklist
 link_blacklist = {"https://www.google.com/search"}
 
-# TODO search for number on google too
-def get_links_for_name(name):
+def get_numbers_and_links_for_name(name):
     # start session
     driver = webdriver.Chrome()
-
     # wait strategy
     driver.implicitly_wait(0.5)
-
     # navigate to search results page
     driver.get(f"https://www.google.com/search?q={name}")
 
@@ -24,8 +22,12 @@ def get_links_for_name(name):
 
     links = list(dict.fromkeys(links))
     links_grp = group_links(links)
-    for domain in links_grp:
-        print(domain, links_grp.get(domain))
+
+    # check for phone numbers in link descriptions
+    search_res_span_els = search_res_cont.find_elements(by=By.CSS_SELECTOR, value="span")
+    numbers = get_phone_numbers_from_string("".join([s.text for s in search_res_span_els]))
 
     # end session
     driver.quit()
+
+    return (numbers, links_grp)
