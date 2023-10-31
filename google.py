@@ -18,7 +18,8 @@ def get_numbers_and_links_for_name(name):
     search_res_cont = driver.find_element(by=By.ID, value="search")
     search_res_links_els = search_res_cont.find_elements(by=By.CSS_SELECTOR, value="a")
     links = [l.get_attribute("href") for l in search_res_links_els
-            if any([l_b not in l.get_attribute("href") for l_b in link_blacklist])]
+            if any([(l.get_attribute("href")) and (l_b not in l.get_attribute("href"))
+                    for l_b in link_blacklist])]
 
     links = list(dict.fromkeys(links))
     links_grp = group_links(links)
