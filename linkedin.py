@@ -18,7 +18,7 @@ def get_linkedin_profile_number(username, password):
     # may need to authorize with code
     # below ensures a feed is navigated to
     wait = WebDriverWait(driver, timeout=120, poll_frequency=1)
-    wait.until(lambda _ : url_contains("www.linkedin.com/feed/"))
+    wait.until(lambda _ : url_contains("linkedin.com/feed/"))
 
     # navigate to contact page
     driver.get("https://www.linkedin.com/in/")
