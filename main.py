@@ -16,11 +16,11 @@ def links_printer(link_num_dict, verbose):
     for link, nums in link_num_dict.items():
         if nums:
             matches += 1
-            print(link, end=": ")
-            print(click.style(nums, fg="cyan"))
+            print(click.style(link, fg="green"), end=": ")
+            print(click.style(nums, fg="white", bg="green"))
         elif verbose:
-            print(link, end=": ")
-            print(click.style(NO_NUMBERS_PROMPT, fg="magenta"))
+            print(click.style(link, fg="magenta"), end=": ")
+            print(click.style(NO_NUMBERS_PROMPT, fg="white", bg="magenta"))
     if matches == 0:
         print(click.style("No links with phone numbers found", fg="yellow"))
 

@@ -38,9 +38,9 @@ def get_this_profile_url_number(driver):
     return profile_url, get_numbers_from_profile(driver, profile_url)
 
 def get_linkedin_profile_numbers(username, password, linkedin_urls):
-    # start session
-    driver = webdriver.Chrome()
-    # wait strategy
+    options = webdriver.ChromeOptions()
+    options.add_argument("--headless=new")
+    driver = webdriver.Chrome(options=options)
     driver.implicitly_wait(0.5)
 
     lkin_login(driver, username, password)

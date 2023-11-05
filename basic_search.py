@@ -12,7 +12,7 @@ def find_numbers_on_page(link):
     try:
         res = requests.get(link, headers=headers, data={}, timeout=10).text
     except:
-        return 'Request Error'
+        return []
     soup = BeautifulSoup(res, 'html.parser')
     phone_numbers = get_phone_numbers_from_string(soup.get_text())
     return phone_numbers if phone_numbers else []
