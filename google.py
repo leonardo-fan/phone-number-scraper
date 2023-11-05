@@ -67,7 +67,7 @@ def get_links_on_google_page(driver, related_levels=0):
     return links
 
 def get_search_query(names):
-    names_quoted = [f"{name}" for name in names]
+    names_quoted = [f"\"{name}\"" for name in names]
     names_q_str = "+".join(names_quoted)
     return f"https://www.google.com/search?as_oq={names_q_str}"
 
