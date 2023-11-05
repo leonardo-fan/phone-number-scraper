@@ -34,7 +34,7 @@ if lkin_username and lkin_password:
     try:
         this_profile_url, this_profile_number, other_profiles_numbers = \
             get_linkedin_profile_numbers(lkin_username, lkin_password, linkedin_urls)
-        print("Given profile details for ", this_profile_url, end=": ")
+        print("Given profile details from system", this_profile_url, end=": ")
         print(this_profile_number if this_profile_number else 'No phone numbers found')
 
         print("For linkedin profiles from Google... ")
