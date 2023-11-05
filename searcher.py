@@ -25,7 +25,7 @@ def links_printer(link_num_dict, verbose):
         print(click.style("No links with phone numbers found", fg="yellow"))
 
 def linkedin_searcher(verbose, linkedin_urls):
-    print(click.style("Searching your Linkedin profile and using it to search profiles from Google...", bold=True))
+    print(click.style("Searching your Linkedin profile and using it to search profiles from Google...", bold=True, overline=True))
     try:
         this_profile_url, this_profile_number, other_profiles_numbers = \
             get_linkedin_profile_numbers(LINKEDIN_UNAME, LINKEDIN_PASS, linkedin_urls)
@@ -54,6 +54,7 @@ def linkedin_searcher(verbose, linkedin_urls):
               help='Enables LinkedIn searching. Must have a LinkedIn Profile to search with')
 def search_phone_numbers_on_name(verbose, names, related_levels, deep_search, linkedin):
     link_grp = get_numbers_and_links_for_names(names, related_levels, deep_search)
+    print(click.style("Getting related links to name from Google...", overline=True, fg="yellow"))
 
     linkedin_urls = []
     for key in link_grp.copy():
