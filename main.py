@@ -4,8 +4,16 @@ from google import get_numbers_and_links_for_names
 from basic_search import find_numbers_on_page
 from linkedin import get_linkedin_profile_numbers
 
+def link_printer(link, verbose, numbers):
+    if verbose or numbers:
+        print(link, end=": ")
+        print(numbers if numbers else NO_NUMBERS_PROMPT)
+
+NO_NUMBERS_PROMPT = 'No phone numbers found'
+
 load_dotenv()
 
+verbose = False
 lkin_username = os.environ.get("LINKEDIN_USERNAME")
 lkin_password = os.environ.get("LINKEDIN_PASSWORD")
 
@@ -14,9 +22,7 @@ names = input("Please input your full name/aliases (comma separated) to search b
     .split(",")
 related_levels = int(input("How many related search levels do you want?: "))
 
-numbers_in_google, link_grp = get_numbers_and_links_for_names(names, related_levels)
-if numbers_in_google:
-    print('https://www.google.com/:', numbers_in_google)
+link_grp = get_numbers_and_links_for_names(names, related_levels)
 
 linkedin_urls = []
 for key in link_grp.copy():
@@ -26,8 +32,8 @@ for key in link_grp.copy():
 
 search_links_goog = [link for grp in link_grp.values() for link in grp]
 for link in search_links_goog:
-    print(link, end=": ")
-    print(find_numbers_on_page(link))
+    numbers = find_numbers_on_page(link)
+    link_printer(link, verbose, numbers)
 
 if lkin_username and lkin_password:
     print("Searching your Linkedin profile and using it to search profiles from Google...")
@@ -35,11 +41,10 @@ if lkin_username and lkin_password:
         this_profile_url, this_profile_number, other_profiles_numbers = \
             get_linkedin_profile_numbers(lkin_username, lkin_password, linkedin_urls)
         print("Given profile details from system", this_profile_url, end=": ")
-        print(this_profile_number if this_profile_number else 'No phone numbers found')
+        print(this_profile_number if this_profile_number else NO_NUMBERS_PROMPT)
 
         print("For linkedin profiles from Google... ")
         for profile_url, numbers in other_profiles_numbers.items():
-            print(profile_url, end=": ")
-            print(numbers if numbers else 'No phone numbers found')
+            link_printer(profile_url, verbose, numbers)
     except TimeoutError:
         print("Your profile could not be found")

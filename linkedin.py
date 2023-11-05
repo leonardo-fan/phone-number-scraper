@@ -49,7 +49,6 @@ def get_linkedin_profile_numbers(username, password, linkedin_urls):
 
     other_profiles_numbers = {}
     format_linkedin_urls(linkedin_urls)
-    print(linkedin_urls)
     for profile_url in linkedin_urls:
         other_profiles_numbers.update({
             profile_url: get_numbers_from_profile(driver, profile_url)

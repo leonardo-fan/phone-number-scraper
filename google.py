@@ -4,7 +4,6 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support.expected_conditions import invisibility_of_element
 from selenium.common.exceptions import NoSuchElementException
 from url_helper import group_links
-from phone_number import get_phone_numbers_from_string
 
 # blacklist
 LINK_BLACKLIST = {"imgres","policies.google.com","www.google.com/preferences",
@@ -39,6 +38,22 @@ def filter_links(link_els, links, related_search_links):
         elif href and href_not_in_blacklist(href):
             links.add(href)
 
+def get_google_links_generic_page(driver, links, related_search_links):
+    a_els = driver.find_elements(by=By.CSS_SELECTOR, value="a")
+    filter_links(a_els, links, related_search_links)
+
+def get_google_links_all_page(driver, links, related_search_links):
+    # get search links
+    search_cont = driver.find_element(by=By.ID, value="search")
+    search_a_els = search_cont.find_elements(by=By.CSS_SELECTOR, value="a")
+    # TODO make argument to say if want to filter out other search types apart from "All"
+    filter_links(search_a_els, links, related_search_links)
+
+    # get bottom elements and filter
+    bottom_cont = driver.find_element(by=By.ID, value="botstuff")
+    bottom_a_els = bottom_cont.find_elements(by=By.CSS_SELECTOR, value="a")
+    filter_links(bottom_a_els, links, related_search_links)
+
 def get_links_on_google_page(driver, related_levels=0):
     if related_levels < 0:
         return []
@@ -47,22 +62,17 @@ def get_links_on_google_page(driver, related_levels=0):
 
     scroll_to_page_bottom(driver)
 
-    # get search links and filter
-    search_cont = driver.find_element(by=By.ID, value="search")
-    search_a_els = search_cont.find_elements(by=By.CSS_SELECTOR, value="a")
-    filter_links(search_a_els, links, related_search_links)
-
-    # get bottom elements
-    bottom_cont = driver.find_element(by=By.ID, value="botstuff")
-    bottom_a_els = bottom_cont.find_elements(by=By.CSS_SELECTOR, value="a")
-    filter_links(bottom_a_els, links, related_search_links)
+    try:
+        get_google_links_all_page(driver, links, related_search_links)
+    except NoSuchElementException:
+        # some query pages like images don't have the same ids as the "All" page
+        get_google_links_generic_page(driver, links, related_search_links)
 
     # does related_levels number of search recursions
     if related_levels:
         for r_link in related_search_links:
-            if r_link not in related_search_links:
-                driver.get(r_link)
-                links.add(get_links_on_google_page(driver, related_levels - 1))
+            driver.get(r_link)
+            links.update(get_links_on_google_page(driver, related_levels - 1))
 
     return links
 
@@ -91,11 +101,7 @@ def get_numbers_and_links_for_names(names, related_levels=0):
 
     links_grp = group_links(list(get_links_on_google_page(driver, related_levels)))
 
-    # check for phone numbers in link descriptions
-    search_res_span_els = driver.find_elements(by=By.CSS_SELECTOR, value="span")
-    numbers = get_phone_numbers_from_string("".join([s.text for s in search_res_span_els]))
-
     # end session
     driver.quit()
 
-    return (numbers, links_grp)
+    return links_grp
