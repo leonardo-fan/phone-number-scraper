@@ -42,19 +42,25 @@ def get_google_links_generic_page(driver, links, related_search_links):
     a_els = driver.find_elements(by=By.CSS_SELECTOR, value="a")
     filter_links(a_els, links, related_search_links)
 
-def get_google_links_all_page(driver, links, related_search_links):
-    # get search links
+def get_google_links_all_page(driver, links, related_search_links, deep_search):
+    # get top search links
     search_cont = driver.find_element(by=By.ID, value="search")
     search_a_els = search_cont.find_elements(by=By.CSS_SELECTOR, value="a")
-    # TODO make argument to say if want to filter out other search types apart from "All"
-    filter_links(search_a_els, links, related_search_links)
+    if deep_search:
+        # will add Google Images, Videos etc. to related links
+        filter_links(search_a_els, links, related_search_links)
+    else:
+        for l in search_a_els:
+            href = l.get_attribute("href")
+            if href and href_not_in_blacklist(href):
+                links.add(href)
 
     # get bottom elements and filter
     bottom_cont = driver.find_element(by=By.ID, value="botstuff")
     bottom_a_els = bottom_cont.find_elements(by=By.CSS_SELECTOR, value="a")
     filter_links(bottom_a_els, links, related_search_links)
 
-def get_links_on_google_page(driver, related_levels=0):
+def get_links_on_google_page(driver, related_levels, deep_search):
     if related_levels < 0:
         return []
     links = set()
@@ -63,7 +69,7 @@ def get_links_on_google_page(driver, related_levels=0):
     scroll_to_page_bottom(driver)
 
     try:
-        get_google_links_all_page(driver, links, related_search_links)
+        get_google_links_all_page(driver, links, related_search_links, deep_search)
     except NoSuchElementException:
         # some query pages like images don't have the same ids as the "All" page
         get_google_links_generic_page(driver, links, related_search_links)
@@ -72,7 +78,7 @@ def get_links_on_google_page(driver, related_levels=0):
     if related_levels:
         for r_link in related_search_links:
             driver.get(r_link)
-            links.update(get_links_on_google_page(driver, related_levels - 1))
+            links.update(get_links_on_google_page(driver, related_levels - 1, deep_search))
 
     return links
 
@@ -89,7 +95,7 @@ def wait_until_captcha_solved(driver):
     except NoSuchElementException:
         pass
 
-def get_numbers_and_links_for_names(names, related_levels=0):
+def get_numbers_and_links_for_names(names, related_levels, deep_search):
     # start session
     driver = webdriver.Chrome()
     # wait strategy
@@ -99,7 +105,7 @@ def get_numbers_and_links_for_names(names, related_levels=0):
 
     wait_until_captcha_solved(driver)
 
-    links_grp = group_links(list(get_links_on_google_page(driver, related_levels)))
+    links_grp = group_links(list(get_links_on_google_page(driver, related_levels, deep_search)))
 
     # end session
     driver.quit()
