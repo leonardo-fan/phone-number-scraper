@@ -97,9 +97,7 @@ def wait_until_captcha_solved(driver):
 
 def get_numbers_and_links_for_names(names, related_levels, deep_search):
     # start session
-    options = webdriver.ChromeOptions()
-    options.add_argument("--headless=new")
-    driver = webdriver.Chrome(options=options)
+    driver = webdriver.Chrome()
     # wait strategy
     driver.implicitly_wait(1)
 
