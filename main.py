@@ -47,7 +47,7 @@ def linkedin_searcher(verbose, linkedin_urls):
               help='"Name" to search for (can use flag multiple times for same person).')
 @click.option('-r', '--rel_levels', 'related_levels', default=0, type=int,
               help='Number of recursive layers to do related searches for (may take a while).')
-@click.option('-d', '--deep_search', default=False,
+@click.option('-d', '--deep_search', default=False, show_default=True, is_flag=True,
               help='Search through other Google search types \
                 i.e. Videos, Images, etc. (may take a while).')
 @click.option('-l', '--linkedin', default=False, show_default=True, is_flag=True,
