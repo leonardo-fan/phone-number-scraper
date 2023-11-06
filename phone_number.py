@@ -1,5 +1,5 @@
 from phonenumbers import PhoneNumberMatcher, PhoneNumberFormat, \
-                         region_code_for_country_code, format_number
+                         region_code_for_country_code, format_number, parse, is_valid_number
 
 # will get all phone number strings from text with a given country code
 # if a match has a leading zero it will only be added if it is a valid number from the country code
@@ -10,3 +10,10 @@ def get_phone_numbers_from_string(text, country_code=61):
     # for each match, format number into international mobile string
     return [format_number(match.number, PhoneNumberFormat.INTERNATIONAL)
             for match in PhoneNumberMatcher(text, region_code_for_country_code(country_code))]
+
+def get_phone_number_if_valid(number, country_code=61):
+    mobile = parse(number, region_code_for_country_code(country_code))
+    if is_valid_number(mobile):
+        return format_number(mobile, PhoneNumberFormat.INTERNATIONAL)
+    else:
+        return None
