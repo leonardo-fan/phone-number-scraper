@@ -28,7 +28,8 @@ def get_numbers_from_profile(driver, profile_url):
 
     # check for phone numbers in spans
     span_els = driver.find_elements(by=By.CSS_SELECTOR, value="span")
-    return get_phone_numbers_from_string("".join([s.text for s in span_els]))
+    text = "".join([s.text for s in span_els])
+    return get_phone_numbers_from_string(text)
 
 def get_this_profile_url_number(driver):
     driver.get("https://www.linkedin.com/in/")
@@ -51,7 +52,7 @@ def get_linkedin_profile_numbers(username, password, linkedin_urls):
         other_profiles_numbers.update({
             profile_url: get_numbers_from_profile(driver, profile_url)
         })
-    
+
     # end session
     driver.quit()
 
