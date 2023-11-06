@@ -4,6 +4,9 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support.expected_conditions import url_contains
 from phone_number import get_phone_numbers_from_string
 
+CAPTCHA_TIMEOUT = 240
+CAPTCHA_POLL = 1
+
 def lkin_login(driver, username, password):
     # login with given credentials
     driver.get("https://www.linkedin.com/login")
@@ -12,7 +15,7 @@ def lkin_login(driver, username, password):
     driver.find_element(By.CSS_SELECTOR, "[type=submit]").click()
     # may need to authorize with code
     # below ensures a feed is navigated to
-    wait = WebDriverWait(driver, timeout=120, poll_frequency=1)
+    wait = WebDriverWait(driver, timeout=CAPTCHA_TIMEOUT, poll_frequency=CAPTCHA_POLL)
     wait.until(url_contains("linkedin.com/feed/"))
 
 def format_linkedin_urls(linkedin_urls):
