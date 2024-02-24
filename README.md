@@ -9,6 +9,8 @@ python3 searcher.py [OPTIONS]
 
 Use the --help option to show more information about the program.
 
+![--help option screenshot](/phone-number-scraper-demo-h.png)
+
 The CLI takes a variable amount of name options which creates and sends a search query to Google. From this search, all the available links are opened and the text within the website is searched through for phone numbers. If a phone number string is given to the “-m” option, a site will only show in the output if a match is found for the given number. 
 
 The search can also be expanded through the “-r” and “-d” options. When a search is done (root node), there are related searches given by Google (children of the root), by using the “-r” option with a number x, the program will search through x levels of related searches (children). By using the “-d” flag, other types of Google searches will be added to the related searches like Google Images, Shopping, Videos etc.
